@@ -1,4 +1,5 @@
 {
+  "homepage": "https://this-is-whiteboard.herokuapp.com/",
   "name": "whiteboard-client",
   "version": "0.1.0",
   "private": true,
