@@ -1,8 +1,36 @@
 const express = require("express");
 const app = express();
-const httpServer = require("http").createServer(app);
-const io = require("socket.io")(httpServer);
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 require("dotenv").config();
+
+let connections = [];
+
+io.on("connect", (socket) => {
+  connections.push(socket);
+  console.info(`${socket.id} has connected`);
+
+  socket.on("draw", (data) => {
+    connections.forEach((con) => {
+      if (con.id !== socket.id) {
+        con.emit("on-draw", { x: data.x, y: data.y });
+      }
+    });
+  });
+
+  socket.on("finish", (data) => {
+    connections.forEach((con) => {
+      if (con.id !== socket.id) {
+        con.emit("on-finish", { x: data.x, y: data.y });
+      }
+    });
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.info(`${socket.id} is disconnected`);
+    connections = connections.filter((con) => con.id !== socket.id);
+  });
+});
 
 const PORT = process.env.YOUR_PORT || process.env.PORT || 5000;
 
@@ -13,4 +41,4 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-httpServer.listen(PORT, () => console.info(`Server started on port ${PORT}`));
+http.listen(PORT, () => console.info(`Server started on port ${PORT}`));

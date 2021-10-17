@@ -1,5 +1,9 @@
 import React from "react";
-import "./styles/index.scss";
+import io from "socket.io-client";
+
+const socket = io.connect("http://localhost:5000", {
+  transports: ["websocket"],
+});
 
 function App() {
   const [isDrawing, setDrawing] = React.useState(false);
@@ -19,6 +23,15 @@ function App() {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 5;
     ctxRef.current = ctx;
+
+    socket.on("on-draw", ({ x, y }) => {
+      ctxRef.current.lineTo(x, y);
+      ctxRef.current.stroke();
+    });
+
+    socket.on("on-finish", ({ x, y }) => {
+      ctxRef.current.moveTo(x, y);
+    });
   }, []);
 
   const startDrawing = ({ nativeEvent }) => {
@@ -28,9 +41,11 @@ function App() {
     setDrawing(true);
   };
 
-  const finishDrawing = () => {
+  const finishDrawing = ({ nativeEvent }) => {
+    const { offsetX, offsetY } = nativeEvent;
     ctxRef.current.closePath();
     setDrawing(false);
+    socket.emit("finish", { x: offsetX, y: offsetY });
   };
 
   const draw = ({ nativeEvent }) => {
@@ -40,6 +55,7 @@ function App() {
     const { offsetX, offsetY } = nativeEvent;
     ctxRef.current.lineTo(offsetX, offsetY);
     ctxRef.current.stroke();
+    socket.emit("draw", { x: offsetX, y: offsetY });
   };
 
   return (
