@@ -8,7 +8,9 @@ let connections = [];
 
 io.on("connect", (socket) => {
   connections.push(socket);
-  console.info(`${socket.id} has connected`);
+  console.info(
+    `${socket.id} has connected, Users online: ${connections.length}`
+  );
 
   socket.on("start", (data) => {
     connections.forEach((con) => {

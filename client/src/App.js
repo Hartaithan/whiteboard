@@ -27,7 +27,7 @@ function App() {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 5;
     ctxRef.current = ctx;
-    
+
     socket.on("on-start", ({ x, y }) => {
       ctxRef.current.beginPath();
       ctxRef.current.moveTo(x, y);
@@ -44,6 +44,9 @@ function App() {
   }, []);
 
   const startDrawing = ({ nativeEvent }) => {
+    if (nativeEvent.which !== 1) {
+      return;
+    }
     const { offsetX, offsetY } = nativeEvent;
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(offsetX, offsetY);
