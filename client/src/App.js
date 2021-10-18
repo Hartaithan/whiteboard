@@ -71,12 +71,43 @@ function App() {
     socket.emit("draw", { x: offsetX, y: offsetY });
   };
 
+  const startTouchDrawing = (e) => {
+    const { clientX, clientY } = e.nativeEvent.changedTouches[0];
+    console.log(clientX, clientY, "startTouchDrawing");
+    ctxRef.current.beginPath();
+    ctxRef.current.moveTo(clientX, clientY);
+    setDrawing(true);
+    socket.emit("start", { x: clientX, y: clientY });
+  };
+
+  const finishTouchDrawing = (e) => {
+    const { clientX, clientY } = e.nativeEvent.changedTouches[0];
+    console.log(clientX, clientY, "finishTouchDrawing");
+    ctxRef.current.closePath();
+    setDrawing(false);
+    socket.emit("finish", { x: clientX, y: clientY });
+  };
+
+  const drawTouch = (e) => {
+    if (!isDrawing) {
+      return;
+    }
+    const { clientX, clientY } = e.nativeEvent.changedTouches[0];
+    console.log(clientX, clientY, "drawTouch");
+    ctxRef.current.lineTo(clientX, clientY);
+    ctxRef.current.stroke();
+    socket.emit("draw", { x: clientX, y: clientY });
+  };
+
   return (
     <div className="app">
       <canvas
         onMouseDown={startDrawing}
         onMouseUp={finishDrawing}
         onMouseMove={draw}
+        onTouchStart={startTouchDrawing}
+        onTouchEnd={finishTouchDrawing}
+        onTouchMove={drawTouch}
         ref={canvasRef}
       />
     </div>
