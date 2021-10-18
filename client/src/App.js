@@ -1,7 +1,11 @@
 import React from "react";
 import io from "socket.io-client";
 
-const socket = io.connect("http://localhost:5000", {
+const URL =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5000"
+    : "http://this-is-whiteboard.herokuapp.com";
+const socket = io.connect(URL, {
   transports: ["websocket"],
 });
 
