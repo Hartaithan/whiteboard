@@ -27,6 +27,11 @@ function App() {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 5;
     ctxRef.current = ctx;
+    
+    socket.on("on-start", ({ x, y }) => {
+      ctxRef.current.beginPath();
+      ctxRef.current.moveTo(x, y);
+    });
 
     socket.on("on-draw", ({ x, y }) => {
       ctxRef.current.lineTo(x, y);
@@ -34,7 +39,7 @@ function App() {
     });
 
     socket.on("on-finish", ({ x, y }) => {
-      ctxRef.current.moveTo(x, y);
+      ctxRef.current.closePath();
     });
   }, []);
 
@@ -43,6 +48,7 @@ function App() {
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(offsetX, offsetY);
     setDrawing(true);
+    socket.emit("start", { x: offsetX, y: offsetY });
   };
 
   const finishDrawing = ({ nativeEvent }) => {

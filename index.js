@@ -10,6 +10,14 @@ io.on("connect", (socket) => {
   connections.push(socket);
   console.info(`${socket.id} has connected`);
 
+  socket.on("start", (data) => {
+    connections.forEach((con) => {
+      if (con.id !== socket.id) {
+        con.emit("on-start", { x: data.x, y: data.y });
+      }
+    });
+  });
+
   socket.on("draw", (data) => {
     connections.forEach((con) => {
       if (con.id !== socket.id) {
