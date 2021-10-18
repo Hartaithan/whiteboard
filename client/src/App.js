@@ -71,32 +71,32 @@ function App() {
     socket.emit("draw", { x: offsetX, y: offsetY });
   };
 
-  const startTouchDrawing = (e) => {
-    const { clientX, clientY } = e.nativeEvent.changedTouches[0];
-    console.log(clientX, clientY, "startTouchDrawing");
+  const startTouchDrawing = ({ nativeEvent }) => {
+    const { pageX, pageY } = nativeEvent.changedTouches[0];
+    console.log(pageX, pageY, "startTouchDrawing");
     ctxRef.current.beginPath();
-    ctxRef.current.moveTo(clientX, clientY);
+    ctxRef.current.moveTo(pageX, pageY);
     setDrawing(true);
-    socket.emit("start", { x: clientX, y: clientY });
+    socket.emit("start", { x: pageX, y: pageY });
   };
 
-  const finishTouchDrawing = (e) => {
-    const { clientX, clientY } = e.nativeEvent.changedTouches[0];
-    console.log(clientX, clientY, "finishTouchDrawing");
+  const finishTouchDrawing = ({ nativeEvent }) => {
+    const { pageX, pageY } = nativeEvent.changedTouches[0];
+    console.log(pageX, pageY, "finishTouchDrawings");
     ctxRef.current.closePath();
     setDrawing(false);
-    socket.emit("finish", { x: clientX, y: clientY });
+    socket.emit("finish", { x: pageX, y: pageY });
   };
 
-  const drawTouch = (e) => {
+  const drawTouch = ({ nativeEvent }) => {
     if (!isDrawing) {
       return;
     }
-    const { clientX, clientY } = e.nativeEvent.changedTouches[0];
-    console.log(clientX, clientY, "drawTouch");
-    ctxRef.current.lineTo(clientX, clientY);
+    const { pageX, pageY } = nativeEvent.changedTouches[0];
+    console.log(pageX, pageY, "drawTouch");
+    ctxRef.current.lineTo(pageX, pageY);
     ctxRef.current.stroke();
-    socket.emit("draw", { x: clientX, y: clientY });
+    socket.emit("draw", { x: pageX, y: pageY });
   };
 
   return (
