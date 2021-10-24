@@ -11,8 +11,20 @@ const socket = io.connect(URL, {
 
 function App() {
   const [isDrawing, setDrawing] = React.useState(false);
+  const [settings, setSettings] = React.useState({
+    lineCap: "round",
+    strokeStyle: "black",
+    lineWidth: 1,
+  });
   const canvasRef = React.useRef(null);
   const ctxRef = React.useRef(null);
+
+  function setCanvasSettings(settings, ctx) {
+    const { lineCap, strokeStyle, lineWidth } = settings;
+    ctx.lineCap = lineCap;
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = lineWidth;
+  }
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -23,10 +35,8 @@ function App() {
 
     const ctx = canvas.getContext("2d");
     ctx.scale(2, 2);
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 5;
     ctxRef.current = ctx;
+    setCanvasSettings(settings, ctx);
 
     socket.on("on-start", ({ x, y }) => {
       ctxRef.current.beginPath();
