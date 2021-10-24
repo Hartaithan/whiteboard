@@ -36,7 +36,7 @@ function App() {
     const ctx = canvas.getContext("2d");
     ctx.scale(2, 2);
     ctxRef.current = ctx;
-    setCanvasSettings(settings, ctx);
+    setCanvasSettings(settings, ctxRef.current);
 
     socket.on("on-start", ({ x, y }) => {
       ctxRef.current.beginPath();
@@ -51,7 +51,13 @@ function App() {
     socket.on("on-finish", ({ x, y }) => {
       ctxRef.current.closePath();
     });
-  }, []);
+  }, []); // eslint-disable-line
+
+  React.useEffect(() => {
+    if (ctxRef !== null) {
+      setCanvasSettings(settings, ctxRef.current);
+    }
+  }, [settings]);
 
   const startDrawing = ({ nativeEvent }) => {
     if (nativeEvent.which !== 1) {
@@ -120,6 +126,13 @@ function App() {
         onTouchMove={drawTouch}
         ref={canvasRef}
       />
+      <div className="tools">
+        <button
+          onClick={() => setSettings({ ...settings, strokeStyle: "red" })}
+        >
+          red
+        </button>
+      </div>
     </div>
   );
 }
