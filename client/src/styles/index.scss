@@ -15,6 +15,10 @@ body {
   overscroll-behavior: contain;
 }
 
+.app {
+  overflow: hidden;
+}
+
 .tools {
   position: absolute;
   bottom: 0;
