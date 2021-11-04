@@ -3,7 +3,8 @@ import io from "socket.io-client";
 
 const URL =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:5000"
+    ? // ? "http://localhost:5000"
+      "http://192.168.249.163:5000"
     : "https://this-is-whiteboard.herokuapp.com";
 const socket = io.connect(URL, {
   transports: ["websocket"],
@@ -13,9 +14,92 @@ function App() {
   const [isDrawing, setDrawing] = React.useState(false);
   const [settings, setSettings] = React.useState({
     lineCap: "round",
-    strokeStyle: "black",
+    strokeStyle: "#000000",
     lineWidth: 1,
   });
+  const [sizes] = React.useState([
+    {
+      id: 1,
+      src: "/icons/size1.svg",
+      lineWidth: 1,
+    },
+    {
+      id: 2,
+      src: "/icons/size2.svg",
+      lineWidth: 3,
+    },
+    {
+      id: 3,
+      src: "/icons/size3.svg",
+      lineWidth: 5,
+    },
+  ]);
+  const [colors] = React.useState([
+    {
+      id: 1,
+      hex: "#FFFFFF",
+    },
+    {
+      id: 2,
+      hex: "#C0C0C0",
+    },
+    {
+      id: 3,
+      hex: "#808080",
+    },
+    {
+      id: 4,
+      hex: "#000000",
+    },
+    {
+      id: 5,
+      hex: "#FF0000",
+    },
+    {
+      id: 6,
+      hex: "#800000",
+    },
+    {
+      id: 7,
+      hex: "#F7B033",
+    },
+    {
+      id: 8,
+      hex: "#FFFF00",
+    },
+    {
+      id: 9,
+      hex: "#00FF00",
+    },
+    {
+      id: 10,
+      hex: "#008000",
+    },
+    {
+      id: 11,
+      hex: "#00FFFF",
+    },
+    {
+      id: 12,
+      hex: "#008080",
+    },
+    {
+      id: 13,
+      hex: "#0000FF",
+    },
+    {
+      id: 14,
+      hex: "#000080",
+    },
+    {
+      id: 15,
+      hex: "#FF00FF",
+    },
+    {
+      id: 16,
+      hex: "#800080",
+    },
+  ]);
   const canvasRef = React.useRef(null);
   const ctxRef = React.useRef(null);
 
@@ -127,11 +211,25 @@ function App() {
         ref={canvasRef}
       />
       <div className="tools">
-        <button
-          onClick={() => setSettings({ ...settings, strokeStyle: "red" })}
-        >
-          red
-        </button>
+        {sizes.map((size) => {
+          return (
+            <button>
+              <img src={size.src} alt={size.src} />
+            </button>
+          );
+        })}
+        <div className="divider" />
+        {colors.map((color) => {
+          return (
+            <button>
+              <div
+                style={{
+                  background: color.hex,
+                }}
+              />
+            </button>
+          );
+        })}
       </div>
     </div>
   );
