@@ -214,6 +214,7 @@ function App() {
         {sizes.map((size) => {
           return (
             <button
+              className={settings.lineWidth === size.lineWidth && "active"}
               onClick={() =>
                 setSettings({ ...settings, lineWidth: size.lineWidth })
               }
@@ -226,6 +227,7 @@ function App() {
         {colors.map((color) => {
           return (
             <button
+              className={settings.strokeStyle === color.hex && "active"}
               onClick={() =>
                 setSettings({ ...settings, strokeStyle: color.hex })
               }
