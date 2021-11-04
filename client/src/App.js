@@ -213,7 +213,11 @@ function App() {
       <div className="tools">
         {sizes.map((size) => {
           return (
-            <button>
+            <button
+              onClick={() =>
+                setSettings({ ...settings, lineWidth: size.lineWidth })
+              }
+            >
               <img src={size.src} alt={size.src} />
             </button>
           );
@@ -221,7 +225,11 @@ function App() {
         <div className="divider" />
         {colors.map((color) => {
           return (
-            <button>
+            <button
+              onClick={() =>
+                setSettings({ ...settings, strokeStyle: color.hex })
+              }
+            >
               <div
                 style={{
                   background: color.hex,
