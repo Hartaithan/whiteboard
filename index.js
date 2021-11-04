@@ -15,7 +15,7 @@ io.on("connect", (socket) => {
   socket.on("start", (data) => {
     connections.forEach((con) => {
       if (con.id !== socket.id) {
-        con.emit("on-start", { x: data.x, y: data.y });
+        con.emit("on-start", { x: data.x, y: data.y, settings: data.settings });
       }
     });
   });

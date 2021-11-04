@@ -121,7 +121,8 @@ function App() {
     ctxRef.current = ctx;
     setCanvasSettings(settings, ctxRef.current);
 
-    socket.on("on-start", ({ x, y }) => {
+    socket.on("on-start", ({ x, y, settings }) => {
+      setCanvasSettings(settings, ctxRef.current);
       ctxRef.current.beginPath();
       ctxRef.current.moveTo(x, y);
     });
@@ -133,6 +134,7 @@ function App() {
 
     socket.on("on-finish", ({ x, y }) => {
       ctxRef.current.closePath();
+      setCanvasSettings(settings, ctxRef.current);
     });
   }, []); // eslint-disable-line
 
@@ -150,7 +152,7 @@ function App() {
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(offsetX, offsetY);
     setDrawing(true);
-    socket.emit("start", { x: offsetX, y: offsetY });
+    socket.emit("start", { x: offsetX, y: offsetY, settings });
   };
 
   const finishDrawing = ({ nativeEvent }) => {
