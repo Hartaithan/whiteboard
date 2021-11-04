@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   cursor: crosshair;
+  user-select: none;
 }
 
 html,
@@ -84,8 +85,10 @@ button {
   width: 20px;
   transition: all 0.2s ease-in-out;
   transform: rotate(180deg);
-  cursor: pointer !important;
   z-index: 100;
+  * {
+    cursor: pointer;
+  }
   &.close {
     transform: rotate(0deg);
   }
