@@ -16,6 +16,7 @@ function App() {
     strokeStyle: "#000000",
     lineWidth: 1,
   });
+  const [isOpen, setOpen] = React.useState(true);
   const [sizes] = React.useState([
     {
       id: 1,
@@ -211,39 +212,51 @@ function App() {
         onTouchMove={drawTouch}
         ref={canvasRef}
       />
-      <div className="tools">
-        {sizes.map((size) => {
-          return (
-            <button
-              className={settings.lineWidth === size.lineWidth && "active"}
-              onClick={() =>
-                setSettings({ ...settings, lineWidth: size.lineWidth })
-              }
-            >
-              <img src={size.src} alt={size.src} />
-            </button>
-          );
-        })}
+      <div className={isOpen ? "tools" : "tools close"}>
+        <div className="tools_sizes">
+          {sizes.map((size) => {
+            return (
+              <button
+                className={settings.lineWidth === size.lineWidth && "active"}
+                onClick={() =>
+                  setSettings({ ...settings, lineWidth: size.lineWidth })
+                }
+              >
+                <img src={size.src} alt={size.src} />
+              </button>
+            );
+          })}
+        </div>
         <div className="divider" />
-        {colors.map((color) => {
-          return (
-            <button
-              className={settings.strokeStyle === color.hex && "active"}
-              onClick={() =>
-                setSettings({ ...settings, strokeStyle: color.hex })
-              }
-            >
-              <div
-                style={{
-                  background: color.hex,
-                  border: `1px solid ${
-                    color.hex === "#FFFFFF" ? "#000" : color.hex
-                  }`,
-                }}
-              />
-            </button>
-          );
-        })}
+        <div className="tools_colors">
+          {colors.map((color) => {
+            return (
+              <button
+                className={settings.strokeStyle === color.hex && "active"}
+                onClick={() =>
+                  setSettings({ ...settings, strokeStyle: color.hex })
+                }
+              >
+                <div
+                  style={{
+                    background: color.hex,
+                    border: `1px solid ${
+                      color.hex === "#FFFFFF" ? "#000" : color.hex
+                    }`,
+                  }}
+                />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div
+        className={isOpen ? "arrow" : "arrow close"}
+        onClick={() => setOpen(!isOpen)}
+      >
+        <button onClick={() => {}}>
+          <img src="/icons/arrow.svg" alt="arrow.svg" />
+        </button>
       </div>
     </div>
   );
