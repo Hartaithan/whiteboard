@@ -3,8 +3,7 @@ import io from "socket.io-client";
 
 const URL =
   process.env.NODE_ENV === "development"
-    ? // ? "http://localhost:5000"
-      "http://192.168.249.163:5000"
+    ? "http://localhost:5000"
     : "https://this-is-whiteboard.herokuapp.com";
 const socket = io.connect(URL, {
   transports: ["websocket"],
