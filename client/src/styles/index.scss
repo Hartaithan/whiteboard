@@ -77,7 +77,6 @@ button {
 }
 
 .arrow {
-  display: none;
   position: absolute;
   bottom: 15px;
   right: 15px;
@@ -106,30 +105,53 @@ button {
 }
 
 @media (max-width: 992px) {
-  .arrow {
-    display: block;
-  }
 }
 
 @media (max-width: 768px) {
+  .tools {
+    height: fit-content;
+    flex-direction: column;
+    &_sizes {
+      margin-bottom: 5px;
+    }
+    .divider {
+      display: none;
+    }
+  }
 }
 
 @media (max-width: 576px) {
   .tools {
     height: fit-content;
     width: fit-content;
+    flex-direction: row;
     &_sizes,
     &_colors {
       flex-wrap: wrap;
     }
     &_sizes {
       width: 35px;
+      margin-bottom: 0;
     }
     &_colors {
       width: 210px;
     }
     button {
       margin: 0 !important;
+    }
+    .divider {
+      display: block;
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .tools {
+    &_colors {
+      width: 175px;
+    }
+    &.close {
+      bottom: -155px;
     }
   }
 }
