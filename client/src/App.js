@@ -235,6 +235,9 @@ function App() {
               <div
                 style={{
                   background: color.hex,
+                  border: `1px solid ${
+                    color.hex === "#FFFFFF" ? "#000" : color.hex
+                  }`,
                 }}
               />
             </button>
