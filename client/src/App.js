@@ -179,7 +179,7 @@ function App() {
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(pageX, pageY);
     setDrawing(true);
-    socket.emit("start", { x: pageX, y: pageY });
+    socket.emit("start", { x: pageX, y: pageY, settings });
   };
 
   const finishTouchDrawing = ({ nativeEvent }) => {
@@ -217,7 +217,10 @@ function App() {
           {sizes.map((size) => {
             return (
               <button
-                className={settings.lineWidth === size.lineWidth && "active"}
+                className={
+                  settings.lineWidth === size.lineWidth ? "active" : ""
+                }
+                key={size.id}
                 onClick={() =>
                   setSettings({ ...settings, lineWidth: size.lineWidth })
                 }
@@ -232,7 +235,8 @@ function App() {
           {colors.map((color) => {
             return (
               <button
-                className={settings.strokeStyle === color.hex && "active"}
+                className={settings.strokeStyle === color.hex ? "active" : ""}
+                key={color.id}
                 onClick={() =>
                   setSettings({ ...settings, strokeStyle: color.hex })
                 }
