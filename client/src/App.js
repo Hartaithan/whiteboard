@@ -103,12 +103,12 @@ function App() {
   const canvasRef = React.useRef(null);
   const ctxRef = React.useRef(null);
 
-  function setCanvasSettings(settings, ctx) {
+  const setCanvasSettings = (settings, ctx) => {
     const { lineCap, strokeStyle, lineWidth } = settings;
     ctx.lineCap = lineCap;
     ctx.strokeStyle = strokeStyle;
     ctx.lineWidth = lineWidth;
-  }
+  };
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -146,9 +146,11 @@ function App() {
   }, [settings]);
 
   const startDrawing = ({ nativeEvent }) => {
+    // disable right click
     if (nativeEvent.which !== 1) {
       return;
     }
+    setCanvasSettings(settings, ctxRef.current);
     const { offsetX, offsetY } = nativeEvent;
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(offsetX, offsetY);
@@ -156,11 +158,27 @@ function App() {
     socket.emit("start", { x: offsetX, y: offsetY, settings });
   };
 
+  const startTouchDrawing = ({ nativeEvent }) => {
+    setCanvasSettings(settings, ctxRef.current);
+    const { pageX, pageY } = nativeEvent.changedTouches[0];
+    ctxRef.current.beginPath();
+    ctxRef.current.moveTo(pageX, pageY);
+    setDrawing(true);
+    socket.emit("start", { x: pageX, y: pageY, settings });
+  };
+
   const finishDrawing = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
     ctxRef.current.closePath();
     setDrawing(false);
     socket.emit("finish", { x: offsetX, y: offsetY });
+  };
+
+  const finishTouchDrawing = ({ nativeEvent }) => {
+    const { pageX, pageY } = nativeEvent.changedTouches[0];
+    ctxRef.current.closePath();
+    setDrawing(false);
+    socket.emit("finish", { x: pageX, y: pageY });
   };
 
   const draw = ({ nativeEvent }) => {
@@ -173,29 +191,11 @@ function App() {
     socket.emit("draw", { x: offsetX, y: offsetY });
   };
 
-  const startTouchDrawing = ({ nativeEvent }) => {
-    const { pageX, pageY } = nativeEvent.changedTouches[0];
-    console.log(pageX, pageY, "startTouchDrawing");
-    ctxRef.current.beginPath();
-    ctxRef.current.moveTo(pageX, pageY);
-    setDrawing(true);
-    socket.emit("start", { x: pageX, y: pageY, settings });
-  };
-
-  const finishTouchDrawing = ({ nativeEvent }) => {
-    const { pageX, pageY } = nativeEvent.changedTouches[0];
-    console.log(pageX, pageY, "finishTouchDrawings");
-    ctxRef.current.closePath();
-    setDrawing(false);
-    socket.emit("finish", { x: pageX, y: pageY });
-  };
-
   const drawTouch = ({ nativeEvent }) => {
     if (!isDrawing) {
       return;
     }
     const { pageX, pageY } = nativeEvent.changedTouches[0];
-    console.log(pageX, pageY, "drawTouch");
     ctxRef.current.lineTo(pageX, pageY);
     ctxRef.current.stroke();
     socket.emit("draw", { x: pageX, y: pageY });
