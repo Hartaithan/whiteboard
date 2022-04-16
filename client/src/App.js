@@ -112,30 +112,19 @@ function App() {
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = window.innerWidth * 2;
-    canvas.height = window.innerHeight * 2;
-    canvas.style.width = `${window.innerWidth}px`;
-    canvas.style.height = `${window.innerHeight}px`;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     const ctx = canvas.getContext("2d");
-    ctx.scale(2, 2);
     ctxRef.current = ctx;
     setCanvasSettings(settings, ctxRef.current);
 
-    socket.on("on-start", ({ x, y, settings }) => {
-      setCanvasSettings(settings, ctxRef.current);
-      ctxRef.current.beginPath();
-      ctxRef.current.moveTo(x, y);
-    });
-
-    socket.on("on-draw", ({ x, y }) => {
-      ctxRef.current.lineTo(x, y);
-      ctxRef.current.stroke();
-    });
-
-    socket.on("on-finish", ({ x, y }) => {
-      ctxRef.current.closePath();
-      setCanvasSettings(settings, ctxRef.current);
+    socket.on("on-send", (data) => {
+      const image = new Image();
+      image.onload = () => {
+        ctxRef.current.drawImage(image, 0, 0);
+      };
+      image.src = data;
     });
   }, []); // eslint-disable-line
 
@@ -150,7 +139,6 @@ function App() {
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(x, y);
     isDrawing.current = true;
-    socket.emit("start", { x, y, settings });
   };
 
   const draw = (x, y) => {
@@ -159,13 +147,13 @@ function App() {
     }
     ctxRef.current.lineTo(x, y);
     ctxRef.current.stroke();
-    socket.emit("draw", { x, y });
   };
 
   const finishDrawing = (x, y) => {
     ctxRef.current.closePath();
     isDrawing.current = false;
-    socket.emit("finish", { x, y });
+    const image = canvasRef.current.toDataURL("image/png");
+    socket.emit("send", image);
   };
 
   const handleMouseDown = ({ nativeEvent }) => {

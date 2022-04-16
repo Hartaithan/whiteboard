@@ -12,26 +12,10 @@ io.on("connect", (socket) => {
     `${socket.id} has connected, Users online: ${connections.length}`
   );
 
-  socket.on("start", (data) => {
+  socket.on("send", (data) => {
     connections.forEach((con) => {
       if (con.id !== socket.id) {
-        con.emit("on-start", { x: data.x, y: data.y, settings: data.settings });
-      }
-    });
-  });
-
-  socket.on("draw", (data) => {
-    connections.forEach((con) => {
-      if (con.id !== socket.id) {
-        con.emit("on-draw", { x: data.x, y: data.y });
-      }
-    });
-  });
-
-  socket.on("finish", (data) => {
-    connections.forEach((con) => {
-      if (con.id !== socket.id) {
-        con.emit("on-finish", { x: data.x, y: data.y });
+        con.emit("on-send", data);
       }
     });
   });
