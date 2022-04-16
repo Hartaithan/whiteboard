@@ -145,71 +145,72 @@ function App() {
     }
   }, [settings]);
 
-  const startDrawing = ({ nativeEvent }) => {
+  const startDrawing = (x, y) => {
+    setCanvasSettings(settings, ctxRef.current);
+    ctxRef.current.beginPath();
+    ctxRef.current.moveTo(x, y);
+    setDrawing(true);
+    socket.emit("start", { x, y, settings });
+  };
+
+  const finishDrawing = (x, y) => {
+    ctxRef.current.closePath();
+    setDrawing(false);
+    socket.emit("finish", { x, y });
+  };
+
+  const draw = (x, y) => {
+    if (!isDrawing) {
+      return;
+    }
+    ctxRef.current.lineTo(x, y);
+    ctxRef.current.stroke();
+    socket.emit("draw", { x, y });
+  };
+
+  const handleMouseDown = ({ nativeEvent }) => {
     // disable right click
     if (nativeEvent.which !== 1) {
       return;
     }
-    setCanvasSettings(settings, ctxRef.current);
     const { offsetX, offsetY } = nativeEvent;
-    ctxRef.current.beginPath();
-    ctxRef.current.moveTo(offsetX, offsetY);
-    setDrawing(true);
-    socket.emit("start", { x: offsetX, y: offsetY, settings });
+    startDrawing(offsetX, offsetY);
   };
 
-  const startTouchDrawing = ({ nativeEvent }) => {
-    setCanvasSettings(settings, ctxRef.current);
-    const { pageX, pageY } = nativeEvent.changedTouches[0];
-    ctxRef.current.beginPath();
-    ctxRef.current.moveTo(pageX, pageY);
-    setDrawing(true);
-    socket.emit("start", { x: pageX, y: pageY, settings });
-  };
-
-  const finishDrawing = ({ nativeEvent }) => {
+  const handleMouseMove = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
-    ctxRef.current.closePath();
-    setDrawing(false);
-    socket.emit("finish", { x: offsetX, y: offsetY });
+    draw(offsetX, offsetY);
   };
 
-  const finishTouchDrawing = ({ nativeEvent }) => {
-    const { pageX, pageY } = nativeEvent.changedTouches[0];
-    ctxRef.current.closePath();
-    setDrawing(false);
-    socket.emit("finish", { x: pageX, y: pageY });
-  };
-
-  const draw = ({ nativeEvent }) => {
-    if (!isDrawing) {
-      return;
-    }
+  const handleMouseUp = ({ nativeEvent }) => {
     const { offsetX, offsetY } = nativeEvent;
-    ctxRef.current.lineTo(offsetX, offsetY);
-    ctxRef.current.stroke();
-    socket.emit("draw", { x: offsetX, y: offsetY });
+    finishDrawing(offsetX, offsetY);
   };
 
-  const drawTouch = ({ nativeEvent }) => {
-    if (!isDrawing) {
-      return;
-    }
+  const handleTouchStart = ({ nativeEvent }) => {
     const { pageX, pageY } = nativeEvent.changedTouches[0];
-    ctxRef.current.lineTo(pageX, pageY);
-    ctxRef.current.stroke();
-    socket.emit("draw", { x: pageX, y: pageY });
+    startDrawing(pageX, pageY);
+  };
+
+  const handleTouchMove = ({ nativeEvent }) => {
+    const { pageX, pageY } = nativeEvent.changedTouches[0];
+    draw(pageX, pageY);
+  };
+
+  const handleTouchEnd = ({ nativeEvent }) => {
+    const { pageX, pageY } = nativeEvent.changedTouches[0];
+    finishDrawing(pageX, pageY);
   };
 
   return (
     <div className="app">
       <canvas
-        onMouseDown={startDrawing}
-        onMouseUp={finishDrawing}
-        onMouseMove={draw}
-        onTouchStart={startTouchDrawing}
-        onTouchEnd={finishTouchDrawing}
-        onTouchMove={drawTouch}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         ref={canvasRef}
       />
       <div className={isOpen ? "tools" : "tools close"}>
