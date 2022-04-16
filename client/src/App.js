@@ -14,24 +14,24 @@ function App() {
   const [settings, setSettings] = React.useState({
     lineCap: "round",
     strokeStyle: "#000000",
-    lineWidth: 1,
+    lineWidth: 2,
   });
   const [isOpen, setOpen] = React.useState(true);
   const [sizes] = React.useState([
     {
       id: 1,
       src: "/icons/size1.svg",
-      lineWidth: 1,
+      lineWidth: 2,
     },
     {
       id: 2,
       src: "/icons/size2.svg",
-      lineWidth: 3,
+      lineWidth: 6,
     },
     {
       id: 3,
       src: "/icons/size3.svg",
-      lineWidth: 5,
+      lineWidth: 10,
     },
   ]);
   const [colors] = React.useState([
@@ -102,6 +102,7 @@ function App() {
   ]);
   const canvasRef = React.useRef(null);
   const ctxRef = React.useRef(null);
+  const multiply = 2;
 
   const setCanvasSettings = (settings, ctx) => {
     const { lineCap, strokeStyle, lineWidth } = settings;
@@ -112,8 +113,10 @@ function App() {
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth * multiply;
+    canvas.height = window.innerHeight * multiply;
+    canvas.style.width = `${window.innerWidth}px`;
+    canvas.style.height = `${window.innerHeight}px`;
 
     const ctx = canvas.getContext("2d");
     ctxRef.current = ctx;
@@ -121,10 +124,12 @@ function App() {
 
     socket.on("on-send", (data) => {
       const image = new Image();
+      image.src = data;
       image.onload = () => {
+        console.log(image.width, image.height);
+        console.log(canvasRef.current.width, canvasRef.current.height);
         ctxRef.current.drawImage(image, 0, 0);
       };
-      image.src = data;
     });
   }, []); // eslint-disable-line
 
@@ -137,7 +142,7 @@ function App() {
   const startDrawing = (x, y) => {
     setCanvasSettings(settings, ctxRef.current);
     ctxRef.current.beginPath();
-    ctxRef.current.moveTo(x, y);
+    ctxRef.current.moveTo(x * multiply, y * multiply);
     isDrawing.current = true;
   };
 
@@ -145,7 +150,7 @@ function App() {
     if (!isDrawing.current) {
       return;
     }
-    ctxRef.current.lineTo(x, y);
+    ctxRef.current.lineTo(x * multiply, y * multiply);
     ctxRef.current.stroke();
   };
 
