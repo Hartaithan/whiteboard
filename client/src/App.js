@@ -126,8 +126,6 @@ function App() {
       const image = new Image();
       image.src = data;
       image.onload = () => {
-        console.log(image.width, image.height);
-        console.log(canvasRef.current.width, canvasRef.current.height);
         ctxRef.current.drawImage(image, 0, 0);
       };
     });
