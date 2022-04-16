@@ -10,7 +10,7 @@ const socket = io.connect(URL, {
 });
 
 function App() {
-  const [isDrawing, setDrawing] = React.useState(false);
+  const isDrawing = React.useRef(false);
   const [settings, setSettings] = React.useState({
     lineCap: "round",
     strokeStyle: "#000000",
@@ -149,23 +149,23 @@ function App() {
     setCanvasSettings(settings, ctxRef.current);
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(x, y);
-    setDrawing(true);
+    isDrawing.current = true;
     socket.emit("start", { x, y, settings });
   };
 
-  const finishDrawing = (x, y) => {
-    ctxRef.current.closePath();
-    setDrawing(false);
-    socket.emit("finish", { x, y });
-  };
-
   const draw = (x, y) => {
-    if (!isDrawing) {
+    if (!isDrawing.current) {
       return;
     }
     ctxRef.current.lineTo(x, y);
     ctxRef.current.stroke();
     socket.emit("draw", { x, y });
+  };
+
+  const finishDrawing = (x, y) => {
+    ctxRef.current.closePath();
+    isDrawing.current = false;
+    socket.emit("finish", { x, y });
   };
 
   const handleMouseDown = ({ nativeEvent }) => {
