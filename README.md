@@ -1,3 +1,3 @@
-"# socket.io test project" 
+"# socket.io test project"
 
-[https://this-is-whiteboard.herokuapp.com/](https://this-is-whiteboard.herokuapp.com/)
+[https://whiteboard-hartaithan.vercel.app/](https://whiteboard-hartaithan.vercel.app/)

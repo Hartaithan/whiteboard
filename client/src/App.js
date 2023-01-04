@@ -4,7 +4,7 @@ import io from "socket.io-client";
 const URL =
   process.env.NODE_ENV === "development"
     ? process.env.REACT_APP_SOCKET
-    : "https://this-is-whiteboard.herokuapp.com";
+    : "https://whiteboard-hartaithan.vercel.app";
 const socket = io.connect(URL, {
   transports: ["websocket"],
 });
